@@ -1,0 +1,33 @@
+import re
+import json
+import requests
+
+url = '87.117.178.40:5051'
+
+def handler(global_vars, params):
+    personalAccount = params["personalAccount"]
+    url_get_applicant = 'http://{}/api/Counter/GetCounters'.format(url)
+    json_applicant    = {"publicPersonalAccount": personalAccount}
+    try:
+        request_value = requests.get(url_get_applicant,params=json_applicant)
+        if (request_value.status_code == 200):
+          	parsed = json.loads(request_value.text)
+            return {
+                "serviceName": parsed[2]["serviceName"],
+              	"number": parsed[2]["number"],
+              	"value": parsed[2]["value"]
+            }
+        else:
+            return {
+                "serviceName": "no",
+              	"number": "no",
+              	"value": "no"
+            }
+    except Exception as e:
+        print("exc")
+        return {
+            "serviceName": "no",
+            "number": "no",
+            "value": "no",
+            "exception": str(e)
+        }
